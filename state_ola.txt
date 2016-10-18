@@ -1,0 +1,2 @@
+
+(setf ola (make-state :POS '(4 4) :VEL '(1 1) :ACTION '(1 1) :COST 4 :TRACK *track*))
