@@ -1,0 +1,9 @@
+(defun iterlimdepthfirstsearch (problem &key)
+ 	"limited depth first search
+     st - initial state
+     problem - problem information
+     lim - limit of depth iterations"
+     ;;; enquanto resultado limdepthfirstsearch for :corte ainda nao encontrou um estado objectivo e como realizou um corte ainda existem nos por explorar
+     ;;; se resultado limdepthfirstsearch for NIL explorou todos os nos e nao encontrou objectivo
+     ;;; se resultado for lista, encontrou o no objectivo e devolveu a lista com o caminho ate ele
+)

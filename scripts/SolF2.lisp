@@ -82,7 +82,6 @@
 ;;; Pedir 
 (defun nextStates (st)
 	"generate all possible next states"
-	;(list st)
 
 	(let ((res '()))
 	  	(dolist (next (possible-actions) res)
@@ -93,61 +92,73 @@
 
 ;;; limdepthfirstsearch 
 ;;;(defun limdepthfirstsearch (problem lim &key cutoff?)
-(defun limdepthfirstsearch (problem lim &key cutoff?)
+(defun limdepthfirstsearch (problem lim &key)
   "limited depth first search
      st - initial state
      problem - problem information
      lim - depth limit"
-;(list (make-node :state (problem-initial-state problem)))
 
 	(let ((path '())
 		  (isCutp nil))
 	    (labels (
 	    	(aux (st lim)
-		    	(let ((next-States nil)
-		    		  (result nil))
+		    	
+	    		(cond
+	    			((funcall (problem-fn-isgoal problem) st) 
+	    				(return-from limdepthfirstsearch (reverse (push st path))))
+	   				((zerop lim) 
+	   					(return-from aux :corte))
+	   				(t (let ((next-States (funcall (problem-fn-nextStates problem) st)))
+	   						(push st path)
+	   						(loop for child-state in next-States do
+	   							(if (equal (aux child-state (1- lim)) :corte) 
+	   								(setf isCutp t))
+							)
+							(pop path)
+	   					)
+	   				)
+	   			)
 
-		    		  
-		   			
-		   				(if (funcall (problem-fn-isgoal problem) st)
-		   					;return final path from init to objective 
-		   					(return-from limdepthfirstsearch (reverse (push st path))))
+				; (let ((next-States nil)
+		  ;   		  (result nil))
+		  ;  				(if (funcall (problem-fn-isgoal problem) st)
+		  ;  					;return final path from init to objective 
+		  ;  					(return-from limdepthfirstsearch (reverse (push st path))))
 		   				
-		   				(if (zerop lim) 
-		   					(return-from aux 'corte))
+		  ;  				(if (zerop lim) 
+		  ;  					(return-from aux :corte))
 		   				
-		   				(setf next-States (funcall (problem-fn-nextStates problem) st))
-		   				(push st path)
-		   				(loop for i in next-States do
+		  ;  				(setf next-States (funcall (problem-fn-nextStates problem) st))
+		  ;  				(push st path)
+		  ;  				(loop for i in next-States do
 		   					
-		   					(setf result (aux i (1- lim)))
-		   					(if (equal result 'corte) (setf isCutp t))
-						)
-						(pop path)
-				)
+		  ;  					(setf result (aux i (1- lim)))
+		  ;  					(if (equal result :corte) (setf isCutp t))
+				; 		)
+				; 		(pop path)
+				; )
 	    	)
 	    )
-	    	(if (equal (aux (problem-initial-state problem) lim) 'corte) (setf isCutp t))
-	    	;return 'corte or NIL
-	    	(if isCutp (return-from limdepthfirstsearch 'corte) (return-from limdepthfirstsearch NIL)) 
+	    	(if (equal (aux (problem-initial-state problem) lim) :corte) (setf isCutp t))
+	    	;return :corte or NIL
+	    	(if isCutp (return-from limdepthfirstsearch :corte) (return-from limdepthfirstsearch NIL)) 
 
 		)
 	)
 )		      
 
 ;;;iterlimdepthfirstsearch
-(defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
-  "limited depth first search
+;(defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
+(defun iterlimdepthfirstsearch (problem &key)
+ 	"limited depth first search
      st - initial state
      problem - problem information
      lim - limit of depth iterations"
-		;(list (make-node :state (problem-initial-state problem)))
 
-
-	(let ((path 'corte)
+	(let ((path :corte)
 		  (limit 0))
 
-		(loop while (equal path 'corte) do
+		(loop while (equal path :corte) do
 			(setf path (limdepthfirstsearch problem limit))
 			(incf limit)
 		)
